@@ -1,8 +1,21 @@
-import os
-from UIron.config import Config
+from UIron.utils import prettify
 
-path = os.path.dirname(__file__)
-path = os.path.join(path, 'UIron/data/config.json')
-config = Config(path)
+dictionary = {
+    'elements': 118,
+    'planets': {
+        'mercurio': 1,
+        'venus': 2,
+        'tierra': 3,
+        'marte': 4
+    },
+    'fingers': [
+        'thumb',
+        'index',
+        'middle',
+        'anular',
+        'pinky'
+    ]
+}
 
-print(config['countries'])
+# print(dictionary)
+print(prettify(dictionary))

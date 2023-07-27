@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: UIron
+Version: 0.0.2
+Summary: Package for User Interface
+Author: Armando Chaparro
+Author-email: pylejandria@gmail.com
+Keywords: python
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: Microsoft :: Windows
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+Package for User Interface

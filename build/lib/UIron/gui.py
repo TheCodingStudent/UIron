@@ -10,7 +10,9 @@ class StatusBar(ttk.Frame):
         self.text = ttk.StringVar()
         self.text_label = ttk.Label(self, textvariable=self.text)
         self.text_label.pack(anchor='w', padx=10)
+
         self.raise_notification = raise_notification
+
         self.reset()
     
     def raise_notification(self, text: str, type_: str) -> None:
