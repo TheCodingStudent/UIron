@@ -1,0 +1,5 @@
+27/07/23
+    9:58am
+    -   Estoy implementando las bases de la libreria, de momento seran algunas
+        pruebas para ver como trabajare la libreria, al parecer sera un sucesor
+        espiritual de PyLejandria.
