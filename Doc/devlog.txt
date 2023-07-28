@@ -3,3 +3,37 @@
     -   Estoy implementando las bases de la libreria, de momento seran algunas
         pruebas para ver como trabajare la libreria, al parecer sera un sucesor
         espiritual de PyLejandria.
+    
+    1:34pm
+    -   He agregado la configuracion
+    -   La barra de estado
+    -   Prettify
+    -   Cada modulo tendra una clase error
+    -   He tenido que actualizar el UploadHub varias veces
+    -   Se me acaba de ocurrir que el UploadHub tenga una opcion para generar
+        un compilador a exe
+
+    11:04pm
+    -   No anote la hora a la que inicie pero fue como a las 9:30-10:00
+    -   Agregue un nuevo apartado para regex, esto me ayudara a no tener que
+        recordar cualquier expresion regular comun
+    -   Junto con esto agregue al UI una entrada que puede recibir una expresion
+        regular y actualizarse para mostrar si es correcta o no, de ahi en mas
+        funciona como una entrada normal
+    -   Al UI tambien añadi el FormFrame, es para solicitudes de datos como la
+        que tuve que usar para el UploadHub, tambien deberia ser util para paginas
+        de configuracion, hablando de ello se me acaba de ocurrir un frame que
+        reciba un path para configuracion en un json y de ahi forme una entrada
+        (usando el FormFrame), que cuando sea modificado pueda guardarse y que
+        incluso no requiera crear el archivo tu mismo, desde la interfaz pondrias
+        unos parametros y este generaria en automatico, despues simplemente al
+        cargar la interfaz se verificaria si ya existe el archivo, si si entonces
+        procede a cargar la informacion de ahi mismo.
+    
+    11:17pm
+    -   Ahora Config recibe un parametro para crear un nuevo json en caso de que
+        no exista, si este parametro es False entonces salta un error de que no
+        existe, esto sera util para el ConfigFrame
+    
+    11:23pm
+    -   Subire a GitHub y me ire a dormir
