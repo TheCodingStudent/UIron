@@ -6,22 +6,33 @@ class ConfigError(Exception):
 
 
 class Config:
-    def __init__(self, config_path: str, auto_save: bool=True, indent: int=4):
+    def __init__(
+            self, config_path: str, auto_save: bool=True, indent: int=4,
+            create_new: bool=True
+    ):
         
         # PROPERTIES
         self.indent = indent
         self.path = config_path
-        self.config = self.load()
+        self.config = self.load(create_new)
         self.auto_save = auto_save
     
-    def load(self) -> None:
+    def load(self, create_new: bool=True) -> None:
         """Loads the configutation from json to dictionary"""
         try:
             with open(self.path, 'r') as f: config = json.load(f)
         except json.decoder.JSONDecodeError:
             raise ConfigError('Invalid json content. Please verify file...')
+        except FileNotFoundError:
+            if create_new: return self.new()
+            raise ConfigError('No such file or directory')
         return config
     
+    def new(self):
+        self.config = dict()
+        self.save()
+        return self.config
+
     def save(self) -> None:
         """Saves the configuration based on dictionary"""
         with open(self.path, 'w') as f:
