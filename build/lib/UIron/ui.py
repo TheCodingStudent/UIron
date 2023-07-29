@@ -160,6 +160,7 @@ class RegexEntry(ttk.Entry):
         self.entry.bind('<FocusOut>', self.reset)
     
     def ok(self) -> bool:
+        self.check_regex()
         return self._ok
 
     def reset(self, *_) -> None:

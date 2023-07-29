@@ -184,9 +184,9 @@ class RegexEntry(ttk.Entry):
 
 
 class Image(ttk.Label):
-    def __init__(self, master: ttk.Frame|ttk.Window, path: str, **kwargs):
+    def __init__(self, master: ttk.Frame|ttk.Window, path: str='', **kwargs):
         super().__init__(master, **kwargs)
-        self.config(image=path)
+        if path: self.config(image=path)
     
     def set_image(self, image) -> None:
         self._image = image
