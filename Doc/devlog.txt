@@ -74,3 +74,8 @@
         para probar las nuevas herramientas del UI, ahora el RegexEntry tiene
         un metodo ok, se usa para saber si el parametro es correcto y asi
         continuar
+
+29/07/23
+    2:54pm
+    -   Ahora PathEntry tiene un nuevo argumento "command", para que puedas
+        crear alguna accion con el boton de seleccionar path

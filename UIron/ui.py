@@ -113,21 +113,24 @@ class FormFrame(ttk.Frame, ttk.LabelFrame):
 class PathEntry(ttk.Frame):
     def __init__(
             self, master: ttk.Frame|ttk.Window, text: str='Select path',
-            ask: str='directory', width: int=20, **kwargs
+            ask: str='directory', width: int=20, command: object=None,
+            **kwargs
     ):
         super().__init__(master, **kwargs)
 
         self.ask = getattr(filedialog, f'ask{ask}')
+        self.command = command
 
         self.entry = ttk.Entry(self, state='readonly', width=width)
         self.entry.pack(side='left', expand=True, fill='x')
 
-        self.button = ttk.Button(self, text=text, command=self.command)
+        self.button = ttk.Button(self, text=text, command=self.on_click)
         self.button.pack(padx=(5, 0))
     
-    def command(self) -> None:
+    def on_Click(self) -> None:
         if not (path := self.ask()): return
         self.set(path)
+        if self.command: self.command()
     
     def set(self, path: str) -> None:
         self.entry.config(state='normal')
@@ -183,11 +186,12 @@ class Image(ttk.Label):
         super().__init__(master, **kwargs)
         if path: self.config(image=path)
     
-    def set_image(self, image) -> None:
+    def set_image(self, image, scale: float=1) -> None:
         self._image = image
         self.width, self.height = self._image.size
         self.image = ImageTk.PhotoImage(self._image)
         super().config(image=self.image)
+        if scale != 1: self.resize_by(scale)
 
     def resize(self, width: int=0, height: int=0) -> None:
         if width==0 and height==0: raise UIError('No size provided to resize image...')
