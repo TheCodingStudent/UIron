@@ -141,7 +141,7 @@ class PathEntry(ttk.Frame):
 
 class RegexEntry(ttk.Entry):
     def __init__(
-            self, master: ttk.Frame|ttk.Window, regex: str='*', width: int=20,
+            self, master: ttk.Frame|ttk.Window, regex: str='*',
             invalid_message: str='Invalid input...', show_message: bool=True, **kwargs
     ):
         super().__init__(master, **kwargs)
@@ -150,14 +150,12 @@ class RegexEntry(ttk.Entry):
         self.show_message = show_message
         self.invalid_message = invalid_message
 
-        self.entry = ttk.Entry(self, width=width)
-        self.entry.pack(fill='x')
         self.message = ttk.StringVar()
         self.label = ttk.Label(self, textvariable=self.message, anchor='center', bootstyle='danger')
 
-        self.entry.bind('<FocusIn>', self.check_regex)
-        self.entry.bind('<KeyRelease>', self.check_regex)
-        self.entry.bind('<FocusOut>', self.reset)
+        self.bind('<FocusIn>', self.check_regex)
+        self.bind('<KeyRelease>', self.check_regex)
+        self.bind('<FocusOut>', self.reset)
     
     def ok(self) -> bool:
         self.check_regex()
@@ -166,21 +164,18 @@ class RegexEntry(ttk.Entry):
     def reset(self, *_) -> None:
         self.label.pack_forget()
         self.message.set(value='')
-        self.entry.config(bootstyle='default')
+        self.config(bootstyle='default')
     
     def check_regex(self, *_) -> None:
         self._ok = re.match(self.regex, self.get())
         if self._ok: return self.reset()
         self.message.set(value=self.invalid_message)
-        self.entry.config(bootstyle='danger')
+        self.config(bootstyle='danger')
         if self.show_message: self.label.pack(fill='x')
-    
-    def get(self) -> str:
-        return self.entry.get()
 
     def set(self, value: str) -> None:
-        self.entry.delete(0, 'end')
-        self.entry.insert(0, value)
+        self.delete(0, 'end')
+        self.insert(0, value)
 
 
 class Image(ttk.Label):
