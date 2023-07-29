@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-VERSION = "0.0.11"
+VERSION = "0.0.12"
 DESCRIPTION = "Package for User Interface"
 LONG_DESCRIPTION = "Package for User Interface"
 

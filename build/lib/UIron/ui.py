@@ -200,7 +200,7 @@ class PathEntry(ttk.Frame):
         self.button = ttk.Button(self, text=text, command=self.on_click)
         self.button.pack(padx=(5, 0))
     
-    def on_Click(self) -> None:
+    def on_click(self) -> None:
         if not (path := self.ask()): return
         self.set(path)
         if self.command: self.command()
