@@ -68,3 +68,9 @@
     9:45pm
     -   Añadi la imagen, con metodos para rescalar y ademas de poder cambiar la
         imagen con el metodo config
+    
+    10:33pm
+    -   Estoy haciendo un programa de collage para Javier, me esta sirviendo
+        para probar las nuevas herramientas del UI, ahora el RegexEntry tiene
+        un metodo ok, se usa para saber si el parametro es correcto y asi
+        continuar

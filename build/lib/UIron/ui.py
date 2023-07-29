@@ -40,7 +40,7 @@ class StatusBar(ttk.Frame):
         self.text = ttk.StringVar()
         self.text_label = ttk.Label(self, textvariable=self.text)
         self.text_label.pack(anchor='w', padx=10)
-        self.raise_notification = raise_notification
+        self._raise_notification = raise_notification
         self.reset()
     
     def raise_notification(self, text: str, type_: str) -> None:
@@ -49,7 +49,7 @@ class StatusBar(ttk.Frame):
         self.config(bootstyle=style)
         self.text_label.config(bootstyle=f'{style}-inverse')
         self.text.set(text)
-        if not self.raise_notification: return self.reset()
+        if not self._raise_notification: return self.reset()
         notification = getattr(Messagebox, f'show_{type_}')
         notification(text, title=type_.title(), parent=self.master)
         self.reset()
