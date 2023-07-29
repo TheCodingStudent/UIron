@@ -1,4 +1,5 @@
 import re
+import types
 from typing import Any
 from PIL import ImageTk
 import ttkbootstrap as ttk
@@ -29,6 +30,79 @@ class Row(ttk.Frame):
         for i, children in enumerate(self.winfo_children()):
             children.grid(row=0, column=i)
         return super().pack(**kwargs)
+
+
+class Draggable:
+    def __new__(cls, widget, *args, master=None, just_droppable: bool=False, **kwargs):
+        widget = widget(master, *args, **kwargs)
+        cls.__init__(cls, widget, just_droppable)
+        return widget
+
+    def __init__(self, widget, just_droppable: bool):
+        self.widget = widget
+        self.widget.bind('<Button-1>', self.on_drag_start)
+        self.widget.bind('<B1-Motion>', self.on_drag_motion)
+        self.widget.bind('<ButtonRelease-1>', self.on_drag_stop)
+
+        self.widget.just_droppable = just_droppable
+        self.widget.original_place = getattr(self.widget, 'place')
+        self.widget.place = types.MethodType(self.place, self.widget)
+        self.widget.origin_x, self.widget.origin_y = None, None
+
+    def place(self, *args, **kwargs) -> None:
+        self.original_place(*args, **kwargs)
+        if self.origin_x is None: self.origin_x = self.winfo_x()
+        if self.origin_y is None: self.origin_y = self.winfo_y()
+
+    def on_drag_start(event) -> None:
+        event.widget.lift()
+        event.widget._drag_start_x = event.x
+        event.widget._drag_start_y = event.y
+        event.widget._origin_start_x = event.widget.winfo_x()
+        event.widget._origin_start_y = event.widget.winfo_y()
+    
+    def on_drag_stop(event) -> None:
+        event.widget.lower()
+        widget_below = event.widget.winfo_containing(event.x_root, event.y_root)
+        if event.widget.just_droppable:
+            if not hasattr(widget_below, '_droppable'):
+                event.widget.lower()
+                return event.widget.place(x=event.widget.origin_x, y=event.widget.origin_y)
+        
+            x, y = widget_below.winfo_x(), widget_below.winfo_y()
+            width, height = widget_below.winfo_width(), widget_below.winfo_height()
+            widget_width, widget_height = event.widget.winfo_width(), event.widget.winfo_height()
+
+            event.widget.place(x=x+(width-widget_width)/2, y=y+(height-widget_height)/2)
+            return event.widget.lift()
+        
+        x, y = event.x, event.y
+        widget_width, widget_height = event.widget.winfo_width(), event.widget.winfo_height()
+        event.widget.place(x=x-widget_width/2, y=y-widget_height/2)
+        event.widget.lift()
+
+    def on_drag_motion(event):
+        x = event.widget.winfo_x() - event.widget._drag_start_x + event.x
+        y = event.widget.winfo_y() - event.widget._drag_start_y + event.y
+        event.widget.place(x=x, y=y)
+
+
+class Droppable:
+    def __new__(cls, widget, master=None, **kwargs):
+        widget = widget(master, **kwargs)
+        cls.__init__(cls, widget)
+        return widget
+
+    def __init__(self, widget):
+        self.widget = widget
+        self.widget._droppable = True
+
+        self.widget.original_place = getattr(self.widget, 'place')
+        self.widget.place = types.MethodType(self.place, self.widget)
+    
+    def place(self, *args, **kwargs):
+        self.original_place(*args, **kwargs)
+        self.origin_x, self.origin_y = self.winfo_x(), self.winfo_y()
 
 
 class StatusBar(ttk.Frame):
@@ -87,7 +161,6 @@ class FormFrame(ttk.Frame, ttk.LabelFrame):
 
         self.row = 0
         self.inputs = {}
-        self.frame = Column()
     
     def add_widget(self, name: str, text: str, widget, sticky: str='w', **kwargs) -> object:
         ttk.Label(self, text=text).grid(row=self.row, column=0, sticky=sticky)
