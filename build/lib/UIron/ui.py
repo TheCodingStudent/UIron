@@ -160,13 +160,12 @@ class FormFrame(ttk.Frame, ttk.LabelFrame):
         else: ttk.LabelFrame.__init__(self, master, text=text, **kwargs)
 
         self.row = 0
-        self.inputs = {}
-    
+
     def add_widget(self, name: str, text: str, widget, sticky: str='w', **kwargs) -> object:
         ttk.Label(self, text=text).grid(row=self.row, column=0, sticky=sticky)
         new_widget = widget(self, **kwargs)
         new_widget.grid(row=self.row, column=1, sticky='ew')
-        self.inputs[name] = new_widget
+        setattr(self, name, new_widget)
         self.row += 1
         return new_widget
 
@@ -179,8 +178,8 @@ class FormFrame(ttk.Frame, ttk.LabelFrame):
         return combobox
 
     def __getitem__(self, key: str) -> object:
-        if not key in self.inputs: raise UIError(f'Attribute "{key}" does not exist')
-        return self.inputs[key].get()
+        if not hasattr(self, key): raise UIError(f'Attribute "{key}" does not exist')
+        return getattr(self, key).get()
 
 
 class PathEntry(ttk.Frame):
