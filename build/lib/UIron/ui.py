@@ -159,13 +159,17 @@ class RegexEntry(ttk.Entry):
         self.entry.bind('<KeyRelease>', self.check_regex)
         self.entry.bind('<FocusOut>', self.reset)
     
+    def ok(self) -> bool:
+        return self._ok
+
     def reset(self, *_) -> None:
         self.label.pack_forget()
         self.message.set(value='')
         self.entry.config(bootstyle='default')
     
     def check_regex(self, *_) -> None:
-        if re.match(self.regex, self.get()): return self.reset()
+        self._ok = re.match(self.regex, self.get())
+        if self._ok: return self.reset()
         self.message.set(value=self.invalid_message)
         self.entry.config(bootstyle='danger')
         if self.show_message: self.label.pack(fill='x')
