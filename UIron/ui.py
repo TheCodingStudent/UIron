@@ -1,10 +1,34 @@
 import re
+from typing import Any
+from PIL import ImageTk
 import ttkbootstrap as ttk
 from tkinter import filedialog
+from PIL import Image as pil_image
+from ttkbootstrap.tooltip import ToolTip
 from ttkbootstrap.dialogs import Messagebox
 
-class UiError(Exception):
+class UIError(Exception):
     ...
+
+
+class Column(ttk.Frame):
+    def __init__(self, master: ttk.Frame|ttk.Window, align: str='', **kwargs):
+        super().__init__(master, **kwargs)
+    
+    def pack(self, **kwargs) -> None:
+        for i, children in enumerate(self.winfo_children()):
+            children.grid(row=i, column=0, sticky='ew')
+        return super().pack(**kwargs)
+
+
+class Row(ttk.Frame):
+    def __init__(self, master: ttk.Frame|ttk.Window, align: str='', **kwargs):
+        super().__init__(master, **kwargs)
+    
+    def pack(self, **kwargs) -> None:
+        for i, children in enumerate(self.winfo_children()):
+            children.grid(row=0, column=i)
+        return super().pack(**kwargs)
 
 
 class StatusBar(ttk.Frame):
@@ -63,6 +87,7 @@ class FormFrame(ttk.Frame, ttk.LabelFrame):
 
         self.row = 0
         self.inputs = {}
+        self.frame = Column()
     
     def add_widget(self, name: str, text: str, widget, sticky: str='w', **kwargs) -> object:
         ttk.Label(self, text=text).grid(row=self.row, column=0, sticky=sticky)
@@ -81,7 +106,7 @@ class FormFrame(ttk.Frame, ttk.LabelFrame):
         return combobox
 
     def __getitem__(self, key: str) -> object:
-        if not key in self.inputs: raise UiError(f'Attribute "{key}" does not exist')
+        if not key in self.inputs: raise UIError(f'Attribute "{key}" does not exist')
         return self.inputs[key].get()
 
 
@@ -151,3 +176,83 @@ class RegexEntry(ttk.Entry):
     def set(self, value: str) -> None:
         self.entry.delete(0, 'end')
         self.entry.insert(0, value)
+
+
+class Image(ttk.Label):
+    def __init__(self, master: ttk.Frame|ttk.Window, path: str, **kwargs):
+        super().__init__(master, **kwargs)
+        self.config(image=path)
+    
+    def set_image(self, image) -> None:
+        self._image = image
+        self.width, self.height = self._image.size
+        self.image = ImageTk.PhotoImage(self._image)
+        super().config(image=self.image)
+
+    def resize(self, width: int=0, height: int=0) -> None:
+        if width==0 and height==0: raise UIError('No size provided to resize image...')
+        if not width and height: width = int(height*self.width/self.height)
+        elif not height and width: height = int(width*self.height/self.width)
+        self.set_image(self._image.resize((width, height)))
+    
+    def resize_by(self, scale: float) -> None:
+        width, height = int(self.width * scale), int(self.height * scale)
+        self.resize(width, height)
+
+    def config(self, **kwargs):
+        for key, value in kwargs.items():
+            if key == 'image': self.set_image(pil_image.open(value))
+            else: super().config(**{key:value})
+    
+    def __setitem__(self, key: str, value: Any) -> None:
+        if key == 'image': return self.config(image=value)
+        return super().__setitem__(key, value)
+
+
+class MenuButton(ttk.Label):
+    def __init__(self, master: ttk.Frame, command=None, **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.command = None
+        self.hovered = False
+        self.clicked = False
+
+        self.color = ttk.Style().theme.colors.bg
+        self.hover_color = ttk.Style().theme.colors.info
+        self.click_color = ttk.Style().theme.colors.success
+
+        self.tooltip = ToolTip(self, text=kwargs['text'], bootstyle='primary-inverse')
+        self.bind('<Enter>', self.enter)
+        self.bind('<Leave>', self.leave)
+        self.bind('<Button-1>', self.click)
+    
+    def enter(self, *_) -> None:
+        self.hovered = True
+        self.update_color()
+        self.tooltip.show_tip()
+    
+    def leave(self, *_) -> None:
+        self.hovered = False
+        self.update_color()
+        self.tooltip.hide_tip()
+    
+    def click(self, *_) -> None:
+        self.clicked = True
+        self.update_color()
+        self.after(100, self.release)
+        if self.command: self.command()
+    
+    def release(self, *_) -> None:
+        self.clicked = False
+        self.update_color()
+    
+    def update_color(self) -> None:
+        if self.clicked: self.config(background=self.click_color)
+        elif self.hovered: self.config(background=self.hover_color)
+        else: self.config(background=self.color)
+
+    def config(self, **kwargs):
+        if 'image' in kwargs:
+            image = pil_image.open(kwargs['image'])
+            self.image = kwargs['image'] = ImageTk.PhotoImage(image)
+        return super().config(**kwargs)

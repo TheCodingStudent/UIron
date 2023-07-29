@@ -37,3 +37,34 @@
     
     11:23pm
     -   Subire a GitHub y me ire a dormir
+
+28/07/23
+    4:23pm
+    -   Aunque me encuentro con la inercia para programar no se me ocurre algo,
+        y si tengo ideas, mas como no pretendo usarlas a corto plazo algo me
+        evita programarlas.
+    -   Lo que si programe fue la clase Table, aunque estoy pensando en cambiarla
+        a una funciona llamada print_table, de esa manera puedo hacer una clase
+        tabla que funcione mas tipo excel, porque para UI eventualmente necesitare
+        una clase Table tambien, por ejemplo para topografia.
+    -   Algo a lo que le he estado dando vueltas tambien es a alguna manera de
+        introducir formulas y datos, como un FormulaFrame y de esta manera tambien
+        hacer interfaces para los programas de la universidad.
+    
+    8:24pm
+    -   Hare algunos experimentos
+
+    9:02pm
+    -   Ahora la clase Table se volvio la funcion table, no era necesaria una
+        clase simplemente para convertir una tabla en string, aun no tengo
+        pensado en como hacer la nueva clase Table, me pondre a jugar con los
+        botones para una barra lateral.
+    -   Tambien estuve pensando en las clases Column y Row, sera un experimento
+        interesante de tkinter y mis nuevos conocimientos.
+    
+    9:19pm
+    -   Con el tiempo vere que tan util sera Row y Column
+
+    9:45pm
+    -   Añadi la imagen, con metodos para rescalar y ademas de poder cambiar la
+        imagen con el metodo config
