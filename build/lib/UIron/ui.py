@@ -260,10 +260,11 @@ class Image(ttk.Label):
         if path: self.config(image=path)
     
     def set_image(self, image, scale: float=1, update_image: bool=True) -> None:
+        print('setting image')
         if update_image: self._image = image
         self.width, self.height = image.size
         self.image = ImageTk.PhotoImage(image)
-        super().config(image=image)
+        super().config(image=self.image)
         if scale != 1: self.resize_by(scale)
 
     def resize(self, width: int=0, height: int=0) -> None:
@@ -278,8 +279,16 @@ class Image(ttk.Label):
 
     def config(self, **kwargs):
         for key, value in kwargs.items():
-            if key == 'image': self.set_image(pil_image.open(value))
-            else: super().config(**{key:value})
+            if key == 'image':
+                print(key, value) 
+                return self.set_image(pil_image.open(value))
+            else:
+                print(f'{key=} {value=}')
+                super().config(**{key:value})
+    
+    def configure(self, **kwargs):
+        print(f'{kwargs=}')
+        return super().configure(**kwargs)
     
     def __setitem__(self, key: str, value: Any) -> None:
         if key == 'image': return self.config(image=value)
