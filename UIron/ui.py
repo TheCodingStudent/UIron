@@ -106,10 +106,11 @@ class Droppable:
 
 
 class StatusBar(ttk.Frame):
-    def __init__(self, master: ttk.Frame, raise_notification=True, **kwargs):
+    def __init__(self, master: ttk.Frame, raise_notification=True, theme: str='secondary', **kwargs):
         super().__init__(master, **kwargs)
 
         # PROPERTIES
+        self.theme = theme
         self.base_string = 'Ready to continue...'
         self.text = ttk.StringVar()
         self.text_label = ttk.Label(self, textvariable=self.text)
@@ -143,8 +144,8 @@ class StatusBar(ttk.Frame):
     def reset(self):
         """Restores the status bar"""
         self.text.set(self.base_string)
-        self.config(bootstyle='secondary')
-        self.text_label.config(bootstyle='secondary-inverse')
+        self.config(bootstyle=self.theme)
+        self.text_label.config(bootstyle=f'{self.theme}-inverse')
     
     def set(self, text: str) -> None:
         """Changes the status bar text"""
@@ -258,11 +259,11 @@ class Image(ttk.Label):
         super().__init__(master, **kwargs)
         if path: self.config(image=path)
     
-    def set_image(self, image, scale: float=1) -> None:
-        self._image = image
-        self.width, self.height = self._image.size
-        self.image = ImageTk.PhotoImage(self._image)
-        super().config(image=self.image)
+    def set_image(self, image, scale: float=1, update_image: bool=True) -> None:
+        if update_image: self._image = image
+        self.width, self.height = image.size
+        self.image = ImageTk.PhotoImage(image)
+        super().config(image=image)
         if scale != 1: self.resize_by(scale)
 
     def resize(self, width: int=0, height: int=0) -> None:
@@ -283,6 +284,58 @@ class Image(ttk.Label):
     def __setitem__(self, key: str, value: Any) -> None:
         if key == 'image': return self.config(image=value)
         return super().__setitem__(key, value)
+
+
+class ImageButton(Image):
+    def __init__(self, master: ttk.Frame, path: str, command=None, **kwargs):
+        super().__init__(master, path=path, **kwargs)
+
+        self.command = command
+        self.hovered = False
+        self.clicked = False
+
+        self.hover_color = None
+        self.click_color = None
+
+        self.bind('<Enter>', self.enter)
+        self.bind('<Leave>', self.leave)
+        self.bind('<Button-1>', self.click)
+    
+    def set_image(self, image, scale: float = 1, update_image: bool=True) -> None:
+        super().set_image(image, scale, update_image)
+
+        if (not hasattr(self, 'hover_color')) or (not self.hover_color) or (self._image.size != self.hover_color.size):
+            self.hover_color = pil_image.new(mode='RGB', size=(self.width, self.height), color=(255, 0, 0))
+            # self.hover_color.paste(self._image, (0, 0))
+            # self.hover_color.paste()
+        if (not hasattr(self, 'click_color')) or (not self.click_color) or (self._image.size != self.click_color.size):
+            self.click_color = pil_image.new(mode='RGB', size=(self.width, self.height), color=(0, 255, 0))
+
+    def enter(self, *_) -> None:
+        self.hovered = True
+        self.update_color()
+    
+    def leave(self, *_) -> None:
+        self.hovered = False
+        self.update_color()
+    
+    def click(self, *_) -> None:
+        self.clicked = True
+        self.update_color()
+        self.after(100, self.release)
+        if self.command: self.command()
+    
+    def release(self, *_) -> None:
+        self.clicked = False
+        self.update_color()
+
+    def update_color(self) -> None:
+        print(f'{self.clicked=} {self.hovered=}')
+        if self.clicked and self.click_color:
+            self.set_image(self.click_color, update_image=False)
+        elif self.hovered and self.hover_color:
+            self.set_image(self.hover_color, update_image=False)
+        else: self.set_image(self._image, update_image=False)
 
 
 class MenuButton(ttk.Label):

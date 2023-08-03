@@ -79,3 +79,9 @@
     2:54pm
     -   Ahora PathEntry tiene un nuevo argumento "command", para que puedas
         crear alguna accion con el boton de seleccionar path
+
+
+02/08/23
+    11:22pm
+    -   Trabajando en Surveyor me di cuenta de la necesidad de poder establecer
+        un tema default para el StatusBar, por si quieres dar algun color especial
